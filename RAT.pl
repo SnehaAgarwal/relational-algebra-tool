@@ -12,6 +12,7 @@ my $port = "3306";
 my $dbh = DBI->connect("DBI:mysql:$database:$host:$port", $user, $passwd, { RaiseError => 1, AutoCommit => 1});
 
 my @tables;
+my %tablesdata;
 
 my $gettables = "SHOW TABLES";
 my $sth = $dbh->prepare($gettables);
@@ -19,6 +20,29 @@ $sth->execute() or die "SQL Error: $DBI::errstr\n";
 while(my @out = $sth->fetchrow_array()){
         my $table = join('', @out);
         push(@tables, $table);
+}
+
+foreach(@tables){
+	$getattributes = "DESCRIBE $_";
+	my $sth = $dbh->prepare($getattributes);
+        $sth->execute() or die "SQL Error: $DBI::errstr\n";
+	my $attributelist;
+	while(my @out = $sth->fetchrow_array()){
+		$attributelist = $attributelist.$out[0]."\t";
+	}
+	$tablesdata{$_}= $attributelist;
+}
+
+foreach(@tables){
+	my $gettable = "SELECT * FROM $_";
+	my $sth = $dbh->prepare($gettable);
+	$sth->execute() or die "SQL Error: $DBI::errstr\n";
+	my $tabledata;
+	while(my @out = $sth->fetchrow_array()){
+		my $tablerow = join("\t", @out);
+		$tabledata = $tabledata.$tablerow."\n";
+	}
+	$tablesdata{$_}= $tablesdata{$_}."\n".$tabledata;
 }
 
 print "Content-type: text/html\n";
@@ -42,77 +66,35 @@ print qq|
 <div id = "query" style="width=50%;float:"left">
 <iframe id="iframeQuery" frameborder="0" name="view" src="runquery.pl" width="100%"></iframe>
 </div>
-<div id="footer">
-<div id = "table1" style="width:20%;float:left" >
-<table align = "center" id = "sampletable" border = "1px">
-<thead>
-<tr><td align = "center" colspan="3">Table 1</td></tr> 
-<th>Name</th><th>Age</th><th>Activity</th>
-</thead>
-<tbody>
-<tr><td>Adam</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Sally</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Tom</td><td>30</td><td>Hiking</td></tr>
-<tr><td>John</td><td>28</td><td>Rock Climbing</td></tr>
-</tbody>
-</table>
-</div>
-<div id = "table2" style="width:20%;float:left" >
-<table align = "center" id = "sampletable" border = "1px">
-<thead>
-<tr><td align = "center" colspan="3">Table 1</td></tr> 
-<th>Name</th><th>Age</th><th>Activity</th>
-</thead>
-<tbody>
-<tr><td>Adam</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Sally</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Tom</td><td>30</td><td>Hiking</td></tr>
-<tr><td>John</td><td>28</td><td>Rock Climbing</td></tr>
-</tbody>
-</table>
-</div>
-<div id = "table3" style="width:20%;float:left" >
-<table align = "center" id="sampletable" border="1px">
-<thead>
-<tr><td align = "center" colspan="3">Table 1</td></tr> 
-<th>Name</th><th>Age</th><th>Activity</th>
-</thead>
-<tbody>
-<tr><td>Adam</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Sally</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Tom</td><td>30</td><td>Hiking</td></tr>
-<tr><td>John</td><td>28</td><td>Rock Climbing</td></tr>
-</tbody>
-</table>
-</div>
-<div id = "table4" style="width:20%;float:left" >
-<table align = "center" id = "sampletable" border = "1px">
-<thead>
-<tr><td align = "center" colspan="3">Table 1</td></tr> 
-<th>Name</th><th>Age</th><th>Activity</th>
-</thead>
-<tbody>
-<tr><td>Adam</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Sally</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Tom</td><td>30</td><td>Hiking</td></tr>
-<tr><td>John</td><td>28</td><td>Rock Climbing</td></tr>
-</tbody>
-</table>
-</div>
-<div id = "table5" style="width:20%;float:left" >
-<table align = "center" id = "sampletable" border = "1px">
-<thead>
-<tr><td align = "center" colspan="3">Table 1</td></tr> 
-<th>Name</th><th>Age</th><th>Activity</th>
-</thead>
-<tbody>
-<tr><td>Adam</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Sally</td><td>25</td><td>Parasailing</td></tr>
-<tr><td>Tom</td><td>30</td><td>Hiking</td></tr>
-<tr><td>John</td><td>28</td><td>Rock Climbing</td></tr>
-</tbody>
-</table>
-</div>
+<div id="footer">|;
+foreach (keys %tablesdata){
+	my $tabledata = $tablesdata{$_};
+	my @tabledata = split("\n",$tabledata);
+	my $thead = $tabledata[0];
+	my @thead = split("\t",$thead);
+	my $col_no = $#thead+1;
+	print qq|
+	<div id = "$_" style="width:20%;float:left">
+	<table align = "center" id = "sampletable" border = "1px">
+	<thead>
+	<tr><td align = "center" colspan="$col_no">$_</td></tr><tr>|;
+	foreach(@thead){
+		print qq|<th>$_</th>|;
+	}
+	print qq|</tr></thead><tbody>|;
+	for (my $i = 1; $i<$#tabledata; $i++){
+		my $tablerow = $tabledata[$i];
+		my @tablerow = split("\t",$tablerow);
+		print "<tr>";
+		foreach (@tablerow){
+			print qq|<td>$_</td>|;
+		}
+		print "</tr>";
+	}
+	print qq|</tbody></table></div>|;
+	
+}
+print qq|
 </div>
 </div>
 </body>

@@ -5,17 +5,12 @@ use DBI;
 use Encode;
 
 my $cgi = new CGI;
-my $no_operands = $cgi->param('hiddenoperands');
-my $no_operators = $cgi->param('hiddenoperators');
-my @operators;
-my @operands;
-for (my $i = 0; $i<$no_operands; $i++){
-	push(@operands, $cgi->param(''));
-}
-
-for (my $i = 0; $i<$no_operators; $i++){
-        push(@operators, $cgi->param(''));
-}
+my $query = $cgi->param('RAquery');
+#my $query = decode_utf8($cgi->param('RAquery'));
+my $operator = $cgi->param('operator');
+$operator = ord($cgi->param('operator'));
+#my $operator = decode_utf8($cgi->param('operator'));
+$query = $query.$operator;
 
 my $SQLquery;
 
@@ -85,26 +80,16 @@ print qq|
 </div>
 <div id = "operators" style="width:20%;float:left">
 <table align = "center" id="sampletable" border = "1px">
-<tr><td><input type="button" value="Insert Operator"></td>
-<td><input type="button" value="Insert Table"></td></tr>
-</table>
-<table align = "center" id="sampletable" border = "1px">
-<tr><td><select name = "">
-  <option value="op">Select Operator</option>
-  <option value="union">&#x22c3</option>
-  <option value="intersect">&#x22c2</option>
-  <option value="join">&#x22c8</option>
-  <option value="rename">&#961</option>
-  <option value="projection">&#960</option>
-  <option value="selection">&#963</option>
-</select></td>
-<td><select name = "">
-  <option value="table">Select Table</option>|;
-  foreach (@tables){
-	print qq|<option value="$_">$_</option>|;
-  }
-print qq|</select></td></tr>
-</table>
+<tbody>
+<tr><td><input type="submit" name="operator" title = "Union" value=&#x22c3></td><td><input type="submit" title = "Intersection" name="operator" value=&#x22c2></td></tr>
+<tr><td><input type="submit" name="operator" title="Natural Join" value=&#x22c8></td><td><input type="submit" name="operator" title="Rename" value=&#961></td></tr>
+<tr><td><input type="submit" name="operator" title = "Projection" value=&#960></td><td><input type="submit" name="operator" title = "Selection" value=&#963></td></tr>
+<tr><td><input type="submit" name="operator" title = "AND" value=&#x2227></td><td><input type="submit" name="operator" title = "OR" value=&#x2228></td></tr>
+<tr><td><input id="operators" value="&#x22c3" onclick="javascript:updateData('a');" type="button"></td><td><input id="operators" value="&#x22c2" onclick="javascript:updateData('a');" type="button"></td>
+<tr><td><input id="operators" value="&#x22c8" onclick="javascript:updateData('a');" type="button"></td><td><input id="operators" value="&#961" onclick="javascript:updateData('a');" type="button"></td>
+<tr><td><input id="operators" value="&#960" onclick="javascript:updateData('a');" type="button"></td><td><input id="operators" value="&#963" onclick="javascript:updateData('a');" type="button"></td>
+<tr><td><input id="operators" value="&#x2227" onclick="javascript:updateData('a');" type="button"></td><td><input id="operators" value="&#x2228" onclick="javascript:updateData('a');" type="button"></td>
+</tbody>
 </div>
 </div>
 </form>
