@@ -1,21 +1,15 @@
 #!/usr/local/cpanel/3rdparty/bin/perl
 #
+#
 use CGI;
 use DBI;
 use Encode;
+use Switch;
 
 my $cgi = new CGI;
-my $no_operands = $cgi->param('hiddenoperands');
-my $no_operators = $cgi->param('hiddenoperators');
-my @operators;
-my @operands;
-for (my $i = 0; $i<$no_operands; $i++){
-	push(@operands, $cgi->param(''));
-}
-
-for (my $i = 0; $i<$no_operators; $i++){
-        push(@operators, $cgi->param(''));
-}
+my $query = $cgi->param('RAquery');
+my @terms = $cgi->param('operator');
+my @operands = $cgi->param('operand');
 
 my $SQLquery;
 
@@ -37,31 +31,36 @@ while(my @out = $sth->fetchrow_array()){
         push(@tables, $table);
 }
 
-my ($table1,$table2,$op);
+my @conditions;
+my $op_len = $#terms;
+my @operators = ('union','intersect','join','rename','projection','selection');
 
 sub parseQuery{
-	foreach(@tables){
-		if ($table2){
-			if ($query =~ /($_)/){
-                                $table1 = $1;
-                        }
-		}
-		else{
-			if ($query =~ /($_)/){
-				$table2 = $1;
-			} 
-		}
+	my $operator;
+	foreach(@terms){
+		$operator = grep(/$_/,@operators);
+		@get_tables = grep(/$_/,@tables) ;
 	}
-	if ($query =~ /(&#961)/){
-		$op = "NATURAL JOIN";
+	switch($operator){
+		case "union" {my_union;}
+		case "intersect" {my_intersect;}
+		case "join" {my_join;}
+		case "rename" {my_rename;}
+		case "projection" {my_projection;}
+		case "selection" {my_selection}
+	}	
+	if ($operator[i])
+	my @conditions = ( $query =~ /\((.*)\)/g )
+	foreach(@terms)
+	{
+		
 	}
 }
+
 
 if ($query){
 	parseQuery;
-	$SQLquery = "SELECT * FROM $table1 $op $table2";
 }
-
 
 print "Content-type: text/html; charset=utf-8\n";
 print qq|
@@ -77,7 +76,7 @@ print qq|
 <form method="get" name="RelAlgebra">
 <div id = "container">
 <div id = "sqlquerybox" style="width:40%;float:right">
-<input type="text" name="SQLquery" style = "height:100px;width=1000px" value = "$query.$SQLquery"><br>
+<input type="text" name="SQLquery" style = "height:100px;width=1000px" value = "$oper"><br>
 </div>
 <div id = "querybox" style="width:40%;float:right">
 <input type="text" name="RAquery" style = "height:100px;width=1000px" value = $query><br>
@@ -89,7 +88,15 @@ print qq|
 <td><input type="button" value="Insert Table"></td></tr>
 </table>
 <table align = "center" id="sampletable" border = "1px">
-<tr><td><select name = "">
+<tr><td><select name = "operator">
+  <option value="op">Select Operator</option>
+  <option value="union">&#x22c3</option>
+  <option value="intersect">&#x22c2</option>
+  <option value="join">&#x22c8</option>
+  <option value="rename">&#961</option>
+  <option value="projection">&#960</option>
+  <option value="selection">&#963</option>
+</select><select name = "operator">
   <option value="op">Select Operator</option>
   <option value="union">&#x22c3</option>
   <option value="intersect">&#x22c2</option>
@@ -118,9 +125,11 @@ function updateData(val){operands.push(val);}
 
 
 sub union{
-	
+	my ($table1, $table2) = @_;
+	my $SQLquery = "SLECT * FROM $table1 UNION $table2";
+	return $query;
 }
 
 sub intersect{
-
+	
 }

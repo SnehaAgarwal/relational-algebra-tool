@@ -6,17 +6,8 @@ use DBI;
 use Encode;
 
 my $cgi = new CGI;
-my $no_operands = $cgi->param('hiddenoperands');
-my $no_operators = $cgi->param('hiddenoperators') || 1;
 my @operators = $cgi->param('operator');
-my @operands;
-for (my $i = 0; $i<$no_operands; $i++){
-	push(@operands, $cgi->param(''));
-}
-
-#for (my $i = 0; $i<$no_operators; $i++){
-#        push(@operators, $cgi->param('operator'));
-#}
+my @operands = $cgi->param('operand');
 
 my $SQLquery;
 
@@ -37,8 +28,6 @@ while(my @out = $sth->fetchrow_array()){
         my $table = join('', @out);
         push(@tables, $table);
 }
-
-my ($table1,$table2,$op);
 
 sub parseQuery{
 	foreach(@tables){
@@ -62,7 +51,6 @@ if ($query){
 	parseQuery;
 	$SQLquery = "SELECT * FROM $table1 $op $table2";
 }
-my $oper = $#operators; 
 
 print "Content-type: text/html; charset=utf-8\n";
 print qq|
