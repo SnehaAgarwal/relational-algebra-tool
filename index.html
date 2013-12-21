@@ -1,0 +1,82 @@
+<html>
+
+<head>
+<title>Query</title>
+</head>
+
+<body>
+<div id="templates" style="display:none;"><select name = "operators[]" id="operator-select">
+<option value="op">Select Operator</option>
+<option value="union">&#x22c3</option>
+<option value="intersect">&#x22c2</option>
+<option value="join">&#x22c8</option>
+<option value="rename">&#961</option>
+<option value="projection">&#960</option>
+<option value="selection">&#963</option>
+<option value="0">None</option>
+</select>
+
+<select name = "operands[]" id="operand-select">
+<option value="table">Select Table</option>
+<option value="table">table</option>
+<option value="table1">table1</option>
+<option value="table2">table2</option>
+<option value="0">None</option>
+</select>
+
+<input type="text" name="conditions[]" id="conditions" value="0"/>
+
+</div>
+<form method="get" name="RelAlgebra">
+<div id = "container">
+<div id = "sqlquerybox" style="width:40%;">
+<input type="text" name="SQLquery" style = "height:100px;width=1000px" value = "$query.$SQLquery"><br>
+</div>
+<div id = "querybox" style="width:40%;">
+<input type="text" name="RAquery" style = "height:100px;width=1000px" value = $query><br>
+<input type="submit" value="Submit">
+</div>
+<div id = "operators" style="width:20%;">
+<table align = "center" id="sampletable" border = "1px">
+<tr><td><input type="button" value="Insert Operator" id="insert-op"></td>
+<td><input type="button" value="Insert Table" id="insert-tbl"></td>
+<td><input type="button" value="Insert Condition" id="insert-cnd"></td></tr>
+</table>
+
+</div>
+</div>
+<div id="makequery" style="height:200px; width: 800px;background-color:blue;"></div>
+</form>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+$("#templates #operator-select").change(function(){
+	if($(this).val()=="0"){
+		$(this).remove();
+	}	
+});
+$("#templates #operand-select").change(function(){
+	if($(this).val()=="0"){
+		$(this).remove();
+	}	
+});
+$("#templates #conditions").change(function(){
+	if($(this).val()==""){
+		$(this).remove();
+	}	
+});
+$("#insert-op").click(function(){
+$("#makequery").append($("#templates #operator-select").clone(true));
+});
+$("#insert-tbl").click(function(){
+$("#makequery").append($("#templates #operand-select").clone(true));
+});
+$("#insert-cnd").click(function(){
+$("#makequery").append($("#templates #conditions").clone(true));
+});
+</script>
+<script>
+operators = [];
+function updateData(val){operands.push(val);}
+</script>
+</body>
+</html>
