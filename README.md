@@ -1,5 +1,5 @@
 Relational Algebra Tool *with SQL equivalent of the RAT query*
-=============================================================
+----------------------------------------------------------------------
 
 This tool is developed as a part of the 'pfun (programming fun)' in CS411, Fall 2013 at UIUC.
 
@@ -9,7 +9,7 @@ This tool is developed as a part of the 'pfun (programming fun)' in CS411, Fall 
 4. The current state of the tables are shown at the bottom of the page.
 
 How to use
-==========
+----------
 
 1. To insert an operator, operand or condition, click on the corresponding button.
 2. Select the tables you want to operate on, from the dropdown list of tables.
@@ -18,7 +18,8 @@ How to use
 5. Click on the `Submit` button to run query!
 
 Syntax Notes
-============
+-------------
+
 Due to time constraints, only one operator can be run successfully by the relational algebra tool.
 So, only insert ONE operator and its corresponding operands/conditions.
 For rename, the condition follows the format `TableName(Attr1,Attr2,...AttrN)` where the attributes listed are the new names for the attributes (listed in the same order as in the table columns). The table name cannot be altered in the given implementation.
@@ -28,16 +29,17 @@ If you want to remove a condition, clear the condition box and click somewhere e
 If you want to remove a table or operator, choose `None` in the selection box.
  
 Additional feature
-==================
+------------------
 
 After you submit the Relational Algebra query, you can also see the equilavent query in MySQL.
 
 Scope of Improvement
-====================
+--------------------
+
 Due to time constraints, the tool could only be developed to handle basic queries. It can be extended to handle complex queries.
 
 Team Contributions
-==================
+--------------------
 
 *Timothy Thorp*
 
