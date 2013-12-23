@@ -63,13 +63,17 @@ sub parseQuery{
 		$SQLquery = my_intersect($operands[0],$operands[1]);}
 	elsif($operators[0] eq "join"){
 		$SQLquery = my_join($operands[0],$operands[1]);}
+	elsif($operators[0] eq "cartesian"){
+		$SQLquery =  my_cart_product($operands[0],$operands[1]);}
+	elsif($operators[0] eq "difference"){
+		$SQLquery =  my_difference($operands[0],$operands[1]);}
 	elsif($operators[0] eq  "rename" ){
 		$SQLquery = my_rename($conditions[0],$operands[1]);}
 	elsif($operators[0] eq  "projection" ){
 		$SQLquery = my_projection($conditions[0],$operands[1]);}
 	elsif($operators[0] eq  "selection" ){
 		$SQLquery = my_selection($conditions[0],$operands[1]);}
-        if ($SQLquery){runQuery($SQLquery);} 
+	if ($SQLquery){runQuery($SQLquery);} 
 }
 
 parseQuery;
@@ -93,13 +97,15 @@ print qq|
 </div>
 <div id="templates" style="display:none;"><select name = "operators" id="operator-select">
 <option value="op">Select Operator</option>
-<option value="union">&#x22c3</option>
-<option value="intersect">&#x22c2</option>
-<option value="join">&#x22c8</option>
-<option value="rename">&#961</option>
-<option value="projection">&#960</option>
-<option value="selection">&#963</option>
-<option value="0">None</option>
+<option value="union" title = "union">&#x22c3</option>
+<option value="intersect" title = "intersection">&#x22c2</option>
+<option value="join" title = "natural join">&#x22c8</option>
+<option value="cartesian" title = "cartesian product">&#9587</option>
+<option value="difference" title = "difference">&#45</option>
+<option value="rename" title="rename">&#961</option>
+<option value="projection" title = "projection">&#960</option>
+<option value="selection" title = "selection">&#963</option>
+<option value="0" title = "remove operator">None</option>
 </select>
 
 <select name = "operands" id="operand-select">
@@ -108,7 +114,7 @@ foreach(@tables){
 	print qq|
 <option value="$_">$_</option>|;
 }
-print qq|<option value="0">None</option>
+print qq|<option value="0" title = "remove table">None</option>
 </select>
 
 <input type="text" name="conditions" id="conditions" value="0"/>
@@ -117,7 +123,8 @@ print qq|<option value="0">None</option>
 <form method="get" name="RelAlgebra">
 <div id = "container">
 <div id = "sqlquerybox" style="width:100%;">
-<textarea name="SQLquery" rows="4" cols="100">$SQLquery</textarea><br>
+<p>Equivalent SQL query: </p>
+<textarea disabled name="SQLquery" rows="4" cols="100">$SQLquery</textarea><br>
 </div>
 <div id = "querybox" style="width:40%;">
 <input type="hidden" name="RAquery" style = "height:100px;width=1000px" value = "$term"><br>
@@ -168,35 +175,6 @@ operators = [];
 function updateData(val){operands.push(val);}
 </script>
 
-<!--<div id="result">|;
-
-my $tabledata = $tablesdata{'Result'};
-my @tabledata = split("\n",$tabledata);
-my $thead = $tabledata[0];
-my @thead = split("\t",$thead);
-my $col_no = $#thead+1;
-print qq|
-<div id = "$_" style="width:20%;float:left">
-<table align = "center" id = "sampletable" border = "1px">
-<thead>
-<tr><td align = "center" colspan="$col_no">Result</td></tr><tr>|;
-foreach(@thead){
-	print qq|<th>$_</th>|;
-}
-print qq|</tr></thead><tbody>|;
-for (my $i = 1; $i<$#tabledata; $i++){
-	my $tablerow = $tabledata[$i];
-	my @tablerow = split("\t",$tablerow);
-	print "<tr>";
-	foreach (@tablerow){
-		print qq|<td>$_</td>|;
-	}
-	print "</tr>";
-}
-print qq|</tbody></table></div>|;
-print qq|
-</div>-->
-
 <div id="footer">|;
 foreach (keys %tablesdata){
 	my $tabledata = $tablesdata{$_};
@@ -237,12 +215,22 @@ sub runQuery{
 	my $sth = $dbh->prepare($SQLquery) or die "Cannot prepare: " . $dbh->errstr();
 	$sth->execute() or die "SQL Error: $DBI::errstr\n";
 	my $tabledata;
-	while(my @out = $sth->fetchrow_array()){
-
-		my $tablerow = join("\t", @out);
-                $tabledata = $tabledata.$tablerow."\n";
+	my @tablehead = $sth->{NAME};
+	my $tmp = $tablehead[0];
+	my $thead;
+	foreach (@$tmp)
+	{
+		$thead = $thead.$_."\t";
+	}
+	$tablesdata{'Result'}=$thead."\n";
+	if ($sth->rows){
+		
+		while(my @out = $sth->fetchrow_array()){
+			my $tablerow = join("\t", @out);
+                	$tabledata = $tabledata.$tablerow."\n";
+        	}
         }
-        $tablesdata{'Result'}= $tabledata;
+	$tablesdata{'Result'}= $tablesdata{'Result'}."\n".$tabledata;
 	return;
 }
 
@@ -297,8 +285,7 @@ for(my $i=1; $i<$#thead1; $i++)
 
 sub my_cart_product{
         my ($table1, $table2) = @_;
-        my $SQLquery = @_;
-        $SQLquery = "SELECT * FROM $table1, $table2";
+        my $SQLquery = "SELECT * FROM $table1, $table2";
         return $SQLquery;
 }
 

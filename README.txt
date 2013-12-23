@@ -36,3 +36,18 @@ Scope of Improvement
 ====================
 Due to time constraints, the tool could only be developed to handle basic queries. It can be extended to handle complex queries.
 
+Team Contributions
+==================
+
+Timothy Thorp
+1. Creating tables
+2. Functions for creating different SQL queries for corresponding RA queries
+
+Sneha Agarwal
+1. Front end
+2. Parsing of RA queries from front end
+3. Sending query to SQL convertor
+4. Sending SQL query to backend
+5. Getting results from backend and printing it
+ 
+
