@@ -14,18 +14,18 @@ How to use
 1. To insert an operator, operand or condition, click on the corresponding button.
 2. Select the tables you want to operate on, from the dropdown list of tables.
 3. Select the operator you want to use from the list of operators.
-4. Write the condition in the textbox that appears when 'Insert Condition' is clicked.
-5. Click on the "Submit" button to run query!
+4. Write the condition in the textbox that appears when `Insert Condition` is clicked.
+5. Click on the `Submit` button to run query!
 
 Syntax Notes
 ============
 Due to time constraints, only one operator can be run successfully by the relational algebra tool.
 So, only insert ONE operator and its corresponding operands/conditions.
-For rename, the condition follows the format "TableName(Attr1,Attr2,...AttrN)" where the attributes listed are the new names for the attributes (listed in the same order as in the table columns). The table name cannot be altered in the given implementation.
+For rename, the condition follows the format `TableName(Attr1,Attr2,...AttrN)` where the attributes listed are the new names for the attributes (listed in the same order as in the table columns). The table name cannot be altered in the given implementation.
 For selection, rename, and projection, put the condition right after the operator, followed by the table.
 For all binary operators, follow the usual RA format: table operator table.
 If you want to remove a condition, clear the condition box and click somewhere else.
-If you want to remove a table or operator, choose "None" in the selection box.
+If you want to remove a table or operator, choose `None` in the selection box.
  
 Additional feature
 ==================
@@ -39,11 +39,13 @@ Due to time constraints, the tool could only be developed to handle basic querie
 Team Contributions
 ==================
 
-Timothy Thorp
+*Timothy Thorp*
+
 1. Creating tables
 2. Functions for creating different SQL queries for corresponding RA queries
 
-Sneha Agarwal
+*Sneha Agarwal*
+
 1. Front end
 2. Parsing of RA queries from front end
 3. Sending query to SQL convertor
