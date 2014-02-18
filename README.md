@@ -1,5 +1,5 @@
 Relational Algebra Tool *with SQL equivalent of the RAT query*
-----------------------------------------------------------------------
+--------------------------------------------------------------
 
 This tool is developed as a part of the 'pfun (programming fun)' in CS411, Fall 2013 at UIUC.
 
@@ -18,7 +18,7 @@ How to use
 5. Click on the `Submit` button to run query!
 
 Syntax Notes
--------------
+------------
 
 Due to time constraints, only one operator can be run successfully by the relational algebra tool.
 So, only insert ONE operator and its corresponding operands/conditions.
@@ -39,12 +39,7 @@ Scope of Improvement
 Due to time constraints, the tool could only be developed to handle basic queries. It can be extended to handle complex queries.
 
 Team Contributions
---------------------
-
-*Timothy Thorp*
-
-1. Creating tables
-2. Functions for creating different SQL queries for corresponding RA queries
+------------------
 
 *Sneha Agarwal*
 
@@ -53,5 +48,8 @@ Team Contributions
 3. Sending query to SQL convertor
 4. Sending SQL query to backend
 5. Getting results from backend and printing it
- 
 
+*Timothy Thorp*
+
+1. Creating tables
+2. Functions for creating different SQL queries for corresponding RA queries
